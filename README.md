@@ -68,9 +68,9 @@ The Gold tables are connected to Power BI to produce interactive dashboards that
 - **High Congestion Intervals**: Occur at **16:45** and **17:15**
 - **Regions like `FRA`, `MEN`, `WV2` show significant volume increases**
 
-![Congestion Peak 1](./assets/congestion_peak_1.jpeg)
+![Congestion Peak 1](./assets/999d6745-bb15-4abb-9f7a-a98ba2bf0ae8.jpeg)
 
-![Congestion Peak 2](./assets/congestion_peak_2.jpeg)
+![Congestion Peak 2](./assets/2.jpeg)
 
 ---
 
