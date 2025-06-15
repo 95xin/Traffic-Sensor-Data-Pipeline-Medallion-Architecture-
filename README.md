@@ -1,5 +1,3 @@
-# Traffic-Sensor-Data-Pipeline-Medallion-Architecture
-
 # 🚦 Traffic Sensor Data Pipeline (Medallion Architecture)
 
 This project is a PySpark-based data pipeline that I customized and executed to process traffic sensor data using the **Medallion Architecture** (Bronze → Silver → Gold). It transforms raw CSV files into clean, analytical Delta tables and supports downstream visualization in BI tools like Power BI or Looker Studio.
