@@ -1,74 +1,105 @@
 # 🚦 Traffic Sensor Data Pipeline (Medallion Architecture)
 
-This project is a PySpark-based data pipeline that I customized and executed to process traffic sensor data using the **Medallion Architecture** (Bronze → Silver → Gold). It transforms raw CSV files into clean, analytical Delta tables and supports downstream visualization in BI tools like Power BI or Looker Studio.
+This project implements a PySpark-based data pipeline for analyzing traffic sensor data using the **Medallion Architecture** (Bronze → Silver → Gold). The pipeline processes raw CSV files into clean, analytics-ready Delta tables and integrates with Power BI to support dashboarding and business insights.
 
 ---
 
-## 🔧 Project Structure
+## 🏗️ Pipeline Architecture
 
-The pipeline follows the industry-standard **three-layer structure**:
+The pipeline follows a modular, layered structure:
 
-### 1️⃣ Bronze Layer - Raw Data Ingestion
+### 🔹 Bronze Layer - Raw Data Ingestion
 - **Script**: `build_bronze.py`
-- **Input**: Raw traffic CSV files
-- **Output Table**: `raw_traffic_<date>`
-- **Purpose**: Load raw data as-is into Delta format for durability and traceability
+- **Purpose**: Load unprocessed CSV files into Delta tables
+- **Table**: `raw_traffic_<date>`
 
-### 2️⃣ Silver Layer - Data Cleaning & Modeling
+### 🔸 Silver Layer - Cleaned Star Schema
 - **Script**: `build_silver.py`
-- **Output Tables**:
+- **Tables**:
   - `traffic_silver_fact`
-  - `dim_region`
-  - `dim_site`
-  - `dim_time`
-  - `dim_detector`
-- **Purpose**: Normalize, clean, and enrich data to build a star schema model
+  - `dim_region`, `dim_site`, `dim_time`, `dim_detector`
+- **Purpose**: Clean, normalize, and join raw data into dimensional schema
 
-### 3️⃣ Gold Layer - Aggregation & Business Insights
+### 🟡 Gold Layer - Aggregated Business Tables
 - **Script**: `build_gold.py`
-- **Output Tables**:
+- **Tables**:
   - `traffic_gold_region_hourly`
   - `traffic_gold_detector_hourly`
   - `traffic_gold_region_monthly`
   - `traffic_gold_congestion_flags`
-- **Purpose**: Aggregate data for performance reporting, dashboards, and business KPIs
+- **Purpose**: Generate summarized, query-optimized tables for analytics
 
 ---
 
-## ✅ Testing
+## ✅ Testing Coverage
 
-To ensure data quality and schema integrity, tests are included at each layer:
+To validate each transformation step, tests are written for each layer:
 
-| Layer  | Script                  | What it tests                        |
-|--------|-------------------------|--------------------------------------|
-| Bronze | `build_bronze_test.py`  | Raw data load success and row counts |
-| Silver | `build_silver_test.py`  | Dimension/Fact schema correctness    |
-| Gold   | `build_gold_test.py`    | Aggregation validity and table checks|
-
----
-
-## 📊 Sample Insights from Gold Layer
-
-Here are some meaningful insights generated after building the full pipeline:
-
-- **Hourly traffic peaks** around 16:00–17:00 in congested regions (e.g., `GE2`, `GR2`)
-- **Detector-level breakdown** helps identify high-volume lanes and potential bottlenecks
-- **Monthly trends** reveal seasonality and long-term traffic growth
-- **Congestion flags** highlight critical intervals and locations prone to traffic jams
-
-These insights were visualized using Power BI connected directly to Delta Lake.
+| Layer  | Script                  | Validations                         |
+|--------|-------------------------|-------------------------------------|
+| Bronze | `build_bronze_test.py`  | Row count, basic ingestion checks   |
+| Silver | `build_silver_test.py`  | Schema integrity, join correctness  |
+| Gold   | `build_gold_test.py`    | Aggregation logic, column presence  |
 
 ---
 
-## 📁 Folder Layout
+## 📊 Power BI Integration
 
-```bash
-traffic_pipeline/
-├── build_bronze.py
-├── build_silver.py
-├── build_gold.py
-├── build_bronze_test.py
-├── build_silver_test.py
-├── build_gold_test.py
-├── /data/       # Raw input files
-└── README.md    # This document
+The Gold tables are connected to Power BI to produce interactive dashboards that provide meaningful insights into traffic volume, congestion, and regional trends.
+
+### 🔗 Recommended Relationships
+- Fact table `traffic_silver_fact` joins:
+  - `dim_site` → via `NB_SCATS_SITE`
+  - `dim_detector` → via `NB_DETECTOR`
+  - `dim_time` → via time ID
+- Gold tables are used for pre-aggregated, fast-access reporting
+
+---
+
+### 📈 Key Visualizations & Insights
+
+#### 1️⃣ Hourly Traffic Volume by Region
+- **Peak Traffic Hours**: Between **16:00 – 17:00**
+- **Congestion Regions**: Noticeable spikes in `GE2`, `GR2`, and `VI2`
+
+---
+
+#### 2️⃣ Congestion Peaks at Specific Times
+- **High Congestion Intervals**: Occur at **16:45** and **17:15**
+- **Regions like `FRA`, `MEN`, `WV2` show significant volume increases**
+
+![Congestion Peak 1](./assets/congestion_peak_1.jpeg)
+
+![Congestion Peak 2](./assets/congestion_peak_2.jpeg)
+
+---
+
+## 🧠 Key Takeaways
+
+Through this project, I gained hands-on experience in:
+- Structuring a pipeline with **Medallion Architecture**
+- Writing modular PySpark ETL code for **Delta Lake**
+- Validating data transformation steps
+- Creating actionable visualizations in **Power BI**
+
+---
+
+## 🚀 Future Improvements
+
+- Enhance `dim_detector` with lane direction & type metadata
+- Enable real-time streaming (Kafka → Delta) ingestion
+- Schedule pipeline with **Airflow** or **Databricks Workflows**
+- Optimize performance with **Z-Ordering** and **partitioning**
+
+---
+
+## 🛠️ Tech Stack
+
+- Python + PySpark
+- Delta Lake on Databricks
+- Power BI (for visualization)
+- Git & GitHub
+
+---
+
+📌 *Project implemented and customized by [Zhen Xin] for portfolio learning and demonstration.*
